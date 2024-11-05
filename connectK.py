@@ -20,13 +20,13 @@ class Board:
     """
     win_length = 4
 
-    def __init__(self, N_colums, N_rows=20):
-        self.N_colums = N_colums
+    def __init__(self, N_columns, N_rows=20):
+        self.N_columns = N_columns
         self.N_rows = N_rows
 
         self.board = []
         for i in range(self.N_rows):
-            self.board.append([0] * self.N_colums)
+            self.board.append([0] * self.N_columns)
         self.state = "ungoing"
 
 
@@ -54,7 +54,7 @@ class Board:
         # check columns:
         for i in range(self.N_rows):
             test_stack = []
-            for j in range(self.N_colums):
+            for j in range(self.N_columns):
                 test_stack.append( self.board[i][j] )
                 if len(test_stack) >= self.win_length:
                     if test_stack[-self.win_length:] == [1] * self.win_length:
@@ -73,7 +73,7 @@ class Board:
 
         #print("#####")
         # check rows:
-        for i in range(self.N_colums):
+        for i in range(self.N_columns):
             test_stack = []
             for j in range(self.N_rows):
                 test_stack.append( self.board[j][i] )
@@ -98,8 +98,8 @@ class Board:
         if not player in [1, 2]:
             raise Exception('player must be 1 or 2')
 
-        if column < 0 or column > self.N_colums:
-            raise Exception('column must be between 0 and', self.N_colums - 1)
+        if column < 0 or column > self.N_columns:
+            raise Exception('column must be between 0 and', self.N_columns - 1)
 
         self.move_up(player, column)
 
@@ -107,8 +107,12 @@ class Board:
 
         if self.state in [1, 2]:
             print("Player {} has won!!!".format(result))
+            return False
         elif self.state == "Draw":
             print("No one won - it's a draw!!!")
+            return False
+        else:
+            return True
 
 
 
@@ -125,14 +129,42 @@ def clean_screen():
 
 if __name__ == "__main__":
 
-    if False:
+    my_board = Board(12,8)
 
-        for step in range(100):
-            for i in range(5):
-                print("\n")
-            print("x"*step)
-            print("\n")
-            for i in range(5):
-                print("\n")
-            time.sleep(0.2)
-            clean_screen()
+    game_ongoing = True
+    player_id = 1
+
+    clean_screen()
+
+    print("\n There are 2 players: Player 1 and Player 2. \n ")
+    time.sleep(2.2)
+    clean_screen()
+    print(" ")
+
+
+    while game_ongoing:
+        for row in range(my_board.N_rows -1, -1, -1):
+            text = "[{:2d}.] || ".format(row+1)
+            for i in range(my_board.N_columns):
+                text += " {:2d} ".format(my_board.board[row][i])
+            text += " || "
+            print(text)
+
+        print("="*(9 + my_board.N_columns * 4 + 4))
+        text = "      || "
+        for i in range(my_board.N_columns):
+            text += " {:2d} ".format(i+1)
+        text += " || "
+        print(text)
+
+        selected_column = 0
+        while (not (selected_column>0 and selected_column<=my_board.N_columns)):
+            print("\nPlayer {}, chose a column to place your stone:".format(player_id))
+            selected_column = int(input())
+
+        game_ongoing = my_board.place(player_id, selected_column -1)
+        player_id = player_id % 2 + 1
+        time.sleep(0.2)
+
+        clean_screen()
+        print(" ")
