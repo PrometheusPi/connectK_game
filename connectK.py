@@ -105,6 +105,23 @@ class Board:
         else:
             return True, None
 
+    def __str__(self):
+        s = "\n"
+        for row in range(my_board.N_rows -1, -1, -1):
+            text = "[{:2d}.] || ".format(row+1)
+            for i in range(my_board.N_columns):
+                text += " {:2d} ".format(my_board.board[row][i])
+            text += " || "
+            s += text + "\n"
+
+        s += "="*(9 + my_board.N_columns * 4 + 4) + "\n"
+        text = "      || "
+        for i in range(my_board.N_columns):
+            text += " {:2d} ".format(i+1)
+        text += " || "
+        s += text
+        return s
+
 
 
 
@@ -120,20 +137,8 @@ def clean_screen():
 
 def print_board(my_board):
     clean_screen()
-    print(" ")
-    for row in range(my_board.N_rows -1, -1, -1):
-        text = "[{:2d}.] || ".format(row+1)
-        for i in range(my_board.N_columns):
-            text += " {:2d} ".format(my_board.board[row][i])
-        text += " || "
-        print(text)
+    print(my_board)
 
-    print("="*(9 + my_board.N_columns * 4 + 4))
-    text = "      || "
-    for i in range(my_board.N_columns):
-        text += " {:2d} ".format(i+1)
-    text += " || "
-    print(text)
 
 if __name__ == "__main__":
 
