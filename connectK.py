@@ -7,12 +7,15 @@ Each player takes turns to add their stones. In contrast to classical connect-4,
 
 import os
 import time
+import sys
 
-#print('Coding Ninjas!\n'*5)
+def clean_screen():
+    """
+    clean terminal screen
+    """
+    sys.stdout.write("\33[H\33[2J") #"\33" is the ESC character
+    sys.stdout.flush()
 
-#time.sleep(5)
-
-#os.system('clear')
 
 class Board:
     """
@@ -28,6 +31,8 @@ class Board:
         for i in range(self.N_rows):
             self.board.append([0] * self.N_columns)
         self.state = "ungoing"
+
+        self.current_player = 1
 
 
 
@@ -62,9 +67,7 @@ class Board:
                             self.state = 2
                         elif self.state == 1:
                             self.state = "Draw"
-            #print(test_stack)
 
-        #print("#####")
         # check rows:
         for i in range(self.N_columns):
             test_stack = []
@@ -81,8 +84,6 @@ class Board:
                             self.state = 2
                         elif self.state == 1:
                             self.state = "Draw"
-            #print(test_stack)
-
 
 
     def place(self, player, column):
@@ -105,6 +106,17 @@ class Board:
         else:
             return True, None
 
+
+    def next(self, column):
+        result = self.place(self.current_player, column)
+        self.current_player = self.current_player % 2 + 1
+        return result
+
+    def get_current_player(self):
+        return self.current_player
+
+
+
     def __str__(self):
         s = "\n"
         for row in range(my_board.N_rows -1, -1, -1):
@@ -123,18 +135,6 @@ class Board:
         return s
 
 
-
-
-
-import sys
-
-def clean_screen():
-    """
-    clean terminal screen
-    """
-    sys.stdout.write("\33[H\33[2J") #"\33" is the ESC character
-    sys.stdout.flush()
-
 def print_board(my_board):
     clean_screen()
     print(my_board)
@@ -143,9 +143,7 @@ def print_board(my_board):
 if __name__ == "__main__":
 
     my_board = Board(12,8)
-
     game_ongoing = True
-    player_id = 1
 
     clean_screen()
 
@@ -154,17 +152,14 @@ if __name__ == "__main__":
 
     print_board(my_board)
 
-
     while game_ongoing:
-
 
         selected_column = 0
         while (not (selected_column>0 and selected_column<=my_board.N_columns)):
-            print("\nPlayer {}, chose a column to place your stone:".format(player_id))
+            print("\nPlayer {}, chose a column to place your stone:".format(my_board.get_current_player()))
             selected_column = int(input())
 
-        game_ongoing, m = my_board.place(player_id, selected_column -1)
-        player_id = player_id % 2 + 1
+        game_ongoing, m = my_board.next(selected_column -1)
         time.sleep(0.5)
 
         print_board(my_board)
